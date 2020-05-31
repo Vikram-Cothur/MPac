@@ -1,0 +1,24 @@
+{
+  "name": "mpac",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "nodemon index.js",
+    "webpack": "webpack --mode=development --watch",
+    "build": "webpack"
+  },
+  "author": "Vikram Cothur",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "global": "^4.4.0",
+    "lodash": "^4.17.15",
+    "nodemon": "^2.0.4",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
