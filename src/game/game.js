@@ -1,18 +1,20 @@
 import Socket from '../socket/socket'
-import consts from './consts'
+import Joystick from './joystick'
 import Keyboard from './keyboard'
 import Map from './map'
 import _ from 'lodash'
 
 export default class Game {
-    constructor(socket, userid, gameContext) {
+    constructor(socket, userid, gameContext, joystick) {
         this.canvas = document.querySelector("#the-mother")
         this.ctx = this.canvas.getContext("2d")
         this.userid = userid
         this.socket = new Socket(socket, userid, this)
         this.gameContext = gameContext
-        
-        this.Keyboard = new Keyboard(this.socket)
+        if(typeof joystick !== "undefined")
+            this.controller = new Joystick(joystick, this.socket)
+        else 
+            this.controller = new Keyboard(this.socket)
         this.canvas.width = this.gameContext.mapSize.width
         this.canvas.height = this.gameContext.mapSize.height
         this.Map = new Map(this.socket, this.gameContext)
@@ -43,6 +45,7 @@ export default class Game {
         }
         _.each(this.gameContext, (v, k) => {
             ctx.fillStyle = v.color;
+            ctx.fillText(k, v.posx, v.posy-5)
             ctx.fillRect(v.posx, v.posy, this.Map.blockSize, this.Map.blockSize);
         })
         window.requestAnimationFrame(() => this.loop())
@@ -53,14 +56,14 @@ export default class Game {
     //     }
     // }
     handlePosition(e) {
-        console.log(e)
         _.each(e, (v, k) => {
             if (k === this.userid) {
+                console.log("e",e, window.innerWidth)
                 this.scrollWindowCenter(v)
             }
             this.gameContext[k] = v
         })
-        console.log(this.gameContext)
+
     }
     scrollWindowCenter(cur) {
         var centerx = window.innerWidth/2
@@ -70,6 +73,7 @@ export default class Game {
 
         let posx = cur.posx - centerx
         let posy = cur.posy - centery
+        // setTimeout(window.scrollTo(posx,posx),100);
         window.scrollTo(posx, posy)
     }
 }

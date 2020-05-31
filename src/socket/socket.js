@@ -8,6 +8,9 @@ class Socket {
     handleInput(inputs){
         this.emit('user-input',inputs)
     }
+    handleJoystick(inputs){
+        this.emit('user-input-joystick',inputs)
+    }
     handlePosition(position){
         this.gameObj.handlePosition(position)
     }
