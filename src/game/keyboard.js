@@ -16,7 +16,7 @@ export default class Keyboard {
 
     }
     pressDown(ev) {
-        console.log(this.keysPressed)
+        //console.log(this.keysPressed)
         if (this.keyMask.includes(ev.key)) {
             if(!this.keysPressed.includes(ev.key)){
                 this.keysPressed = _.concat(this.keysPressed, ev.key)

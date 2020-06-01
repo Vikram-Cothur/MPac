@@ -16,14 +16,14 @@ const checkForCollision = (userObj, blocks, blockSize) => {
             (userObj.posy + s > y)
         )
         ) {
-            console.log(v, userObj, Date.now(), blockSize)
+
             console.log("HIT")
             collided = true
         }
     })
     return collided
 }
-const handleInput = (keys, userObj, blocks, blockSize) => {
+const handleInput = (keys, userObj, blocks, blockSize, food, foodSize) => {
     speed = 10
     const ogUserObj = Object.assign({}, userObj);
     keys.forEach(key => {
@@ -45,8 +45,40 @@ const handleInput = (keys, userObj, blocks, blockSize) => {
         }
     });
     if (checkForCollision(userObj, blocks, blockSize)) {
-        return ogUserObj
+        userObj = Object.assign({}, ogUserObj);
     }
+    userObj = handlePlayerEatFood(userObj, food, foodSize)
+    return userObj
+}
+const handlePlayerEatFood = (userObj, food, foodSize) => {
+
+    let x = 0
+    let y = 0
+    let s = foodSize
+    let collided = false
+
+    food.forEach((v, i) => {
+        x = v[0]
+        y = v[1]
+        // console.log(v)
+        // try to improve this
+        // || (x < (userObj.posx + s) && (x > userObj.posx)
+        //     && (y > userObj.posy) && (y < (userObj.posy + s))
+        if ((userObj.posx < x + s &&
+            (userObj.posx + s > x) &&
+            (userObj.posy < y + s) &&
+            (userObj.posy + s > y)
+        )
+        ) {
+
+            console.log("ATE FOOD")
+            collided = true
+            food.splice(i,1)
+            userObj.score += 1
+        }
+    })
+
+
     return userObj
 }
 const handleInputJoystick = (vector, userObj) => {
@@ -68,8 +100,28 @@ const generateMap = ({ height, width }, blockSize) => {
     }
     return blocks
 }
+const generateFood = (currentFood, { height, width }, blocks, blockSize) => {
+    if (currentFood === null) {
+        var food = []
+    } else {
+        var food = currentFood
+    }
+    const numOfFood = 30 - food.length
+    for (var i = 0; i < numOfFood; i++) {
+        const x = Math.floor(Math.random() * width)
+        const y = Math.floor(Math.random() * height)
+        if (checkForCollision({ posx: x, posy: y }, blocks, blockSize)) {
+            continue
+        } else {
+            food.push([x, y])
+        }
+        // console.log("food", [x, y])
+    }
+    return food
+}
 module.exports = {
     handleInput,
     handleInputJoystick,
-    generateMap
+    generateMap,
+    generateFood
 }

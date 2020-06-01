@@ -3,6 +3,8 @@ import Joystick from './joystick'
 import Keyboard from './keyboard'
 import Map from './map'
 import _ from 'lodash'
+import Players from './players'
+import Food from './food'
 
 export default class Game {
     constructor(socket, userid, gameContext, joystick) {
@@ -18,8 +20,10 @@ export default class Game {
         this.canvas.width = this.gameContext.mapSize.width
         this.canvas.height = this.gameContext.mapSize.height
         this.Map = new Map(this.socket, this.gameContext)
-        
+        this.players = new Players(this.ctx, this.userid)
+        this.food = new Food(this.ctx)
         console.log("Socket ", socket)
+        console.log("Game Context",gameContext)
     }
     init() {
         var ctx = this.ctx
@@ -41,13 +45,11 @@ export default class Game {
         if(this.Map.ready){
             ctx.fillStyle ="white";
             ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+            this.food.draw(this.gameContext)
             this.Map.drawMap(ctx)
+            this.players.draw(this.gameContext)
+            
         }
-        _.each(this.gameContext, (v, k) => {
-            ctx.fillStyle = v.color;
-            ctx.fillText(k, v.posx, v.posy-5)
-            ctx.fillRect(v.posx, v.posy, this.Map.blockSize, this.Map.blockSize);
-        })
         window.requestAnimationFrame(() => this.loop())
     }
     // handleInput(e) {

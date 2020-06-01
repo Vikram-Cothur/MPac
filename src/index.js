@@ -17,7 +17,7 @@ window.onload = () => {
     });
     socket.on('connect', () => {
         if (!userid) {
-            userid = "vikram" + Math.floor(Math.random() * 100)
+            //userid = "vikram" + Math.floor(Math.random() * 100)
             const form = document.querySelector("#form")
             form.className = "active"
             const btn = document.querySelector("#submit")
@@ -38,7 +38,7 @@ window.onload = () => {
         window.location.reload()
     })
     socket.on('game-context', gameContext => {
-        console.log("gameContext ", gameContext, game)
+        //console.log("gameContext ", gameContext, game)
         if (/Mobi|Android/i.test(navigator.userAgent)) {
             // user is using mobile!
             console.log(navigator.userAgent)
@@ -51,12 +51,12 @@ window.onload = () => {
             alert("There are currently some issues in the mobile version. Please open with a pc")
         }
         if (game === null) {
-            console.log("GAME IS UNDEFINED:", gameContext)
+            // console.log("GAME IS UNDEFINED:", gameContext)
             game = new Game(socket = socket, userid = userid, gameContext = gameContext, nipple)
             game.init()
             window.requestAnimationFrame(() => game.loop())
         } else {
-            console.log("GAME IS DEFINED:", gameContext)
+            //console.log("GAME IS DEFINED:", gameContext)
             game.gameContext = gameContext
         }
 

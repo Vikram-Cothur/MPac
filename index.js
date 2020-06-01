@@ -11,10 +11,16 @@ app.use(express.static(__dirname + '/dist'));
 gameContext = {
     mapSize: { height: 32 * 30, width: 32 * 50 },
     blockSize: 32,
+    foodSize: 24
 }
-
 const blocks = util.generateMap(gameContext.mapSize, gameContext.blockSize)
-
+const food = util.generateFood(null, gameContext.mapSize, blocks, gameContext.blockSize )
+gameCycle = setInterval(() => {
+    io.emit('game-context', gameContext);
+}, 25);
+foodCycle = setInterval(()=>{
+    gameContext.food = util.generateFood(food, gameContext.mapSize, blocks, gameContext.blockSize )
+},1000)
 io.on('connection', (socket) => {
 
     console.log("\nA user connected")
@@ -30,9 +36,12 @@ io.on('connection', (socket) => {
             socket.emit("error", "Player is not recognized")
             return
         }
-       
-        gameContext[socket.name] = util.handleInput(input.keys, gameContext[socket.name], blocks, gameContext.blockSize)
-        io.sockets.emit('position', { [socket.name]: gameContext[socket.name] })
+
+        gameContext[socket.name] = util.handleInput(
+            input.keys, gameContext[socket.name],
+             blocks, gameContext.blockSize,
+             gameContext.food, gameContext.foodSize)
+        //io.sockets.emit('position', { [socket.name]: gameContext[socket.name] })
     })
 
     socket.on('user-input-joystick', input => {
@@ -58,17 +67,18 @@ io.on('connection', (socket) => {
             gameContext[name] = {
                 posx: 100,
                 posy: 50,
-                color: _.sample(["red", "green", "blue"])
+                color: _.sample(["red", "green", "blue"]),
+                score:0
             }
             console.log("newGameContext", gameContext)
-            io.sockets.emit('game-context', gameContext)
+            // io.sockets.emit('game-context', gameContext)
         }
     })
     socket.on('game-context', (userid) => {
         if (userid in gameContext) {
 
             console.log("USER ID PRESENT", gameContext)
-            socket.emit('game-context', gameContext)
+            socket.emit('error', "User is already present")
         } else {
             // if user id not present add it
             console.log("USER ID NOT PRESENT", gameContext)
@@ -76,9 +86,10 @@ io.on('connection', (socket) => {
             gameContext[userid] = {
                 posx: 100,
                 posy: 50,
-                color: _.sample(["red", "green", "blue"])
+                color: _.sample(["red", "green", "blue"]),
+                score:0
             }
-            socket.emit('game-context', gameContext)
+            // socket.emit('game-context', gameContext)
         }
     })
 })
