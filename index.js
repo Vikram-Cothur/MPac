@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
 
     socket.on('user-input-joystick', input => {
         if (typeof socket.name === "undefined") {
-            socket.emit("error", "Player is not recognized")
+            // socket.emit("error", "Player is not recognized")
             return
         }
         // console.log(input, gameContext[socket.name])
@@ -91,6 +91,9 @@ io.on('connection', (socket) => {
             }
             // socket.emit('game-context', gameContext)
         }
+    })
+    socket.on('error', (error)=>{
+        console.log(error)
     })
 })
 
