@@ -14,13 +14,13 @@ gameContext = {
     foodSize: 24
 }
 const blocks = util.generateMap(gameContext.mapSize, gameContext.blockSize)
-const food = util.generateFood(null, gameContext.mapSize, blocks, gameContext.blockSize )
+const food = util.generateFood(null, gameContext.mapSize, blocks, gameContext.blockSize)
 gameCycle = setInterval(() => {
     io.emit('game-context', gameContext);
 }, 25);
-foodCycle = setInterval(()=>{
-    gameContext.food = util.generateFood(food, gameContext.mapSize, blocks, gameContext.blockSize )
-},1000)
+foodCycle = setInterval(() => {
+    gameContext.food = util.generateFood(food, gameContext.mapSize, blocks, gameContext.blockSize)
+}, 1000)
 io.on('connection', (socket) => {
 
     console.log("\nA user connected")
@@ -39,8 +39,8 @@ io.on('connection', (socket) => {
 
         gameContext[socket.name] = util.handleInput(
             input.keys, gameContext[socket.name],
-             blocks, gameContext.blockSize,
-             gameContext.food, gameContext.foodSize)
+            blocks, gameContext.blockSize,
+            gameContext.food, gameContext.foodSize)
         //io.sockets.emit('position', { [socket.name]: gameContext[socket.name] })
     })
 
@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
                 posx: 100,
                 posy: 50,
                 color: _.sample(["red", "green", "blue"]),
-                score:0
+                score: 0
             }
             console.log("newGameContext", gameContext)
             // io.sockets.emit('game-context', gameContext)
@@ -87,16 +87,22 @@ io.on('connection', (socket) => {
                 posx: 100,
                 posy: 50,
                 color: _.sample(["red", "green", "blue"]),
-                score:0
+                score: 0
             }
             // socket.emit('game-context', gameContext)
         }
     })
-    socket.on('error', (error)=>{
+    socket.on('error', (error) => {
         console.log(error)
     })
 })
-
-server.listen(3001, () => {
-    console.log("STARTED LISTENING")
-})
+var env = process.env.NODE_ENV || 'development';
+if (env === 'development') {
+    server.listen(3001, () => {
+        console.log("STARTED LISTENING")
+    })
+} else {
+    server.listen(80, () => {
+        console.log("STARTED LISTENING at 80")
+    })
+}
