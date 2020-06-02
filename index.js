@@ -21,6 +21,9 @@ gameCycle = setInterval(() => {
 foodCycle = setInterval(() => {
     gameContext.food = util.generateFood(food, gameContext.mapSize, blocks, gameContext.blockSize)
 }, 1000)
+playerEatCycle = setInterval(()=>{
+    util.handlePlayerEatPlayer(gameContext)
+},100)
 io.on('connection', (socket) => {
 
     console.log("\nA user connected")
@@ -36,6 +39,7 @@ io.on('connection', (socket) => {
             socket.emit("error", "Player is not recognized")
             return
         }
+        
 
         gameContext[socket.name] = util.handleInput(
             input.keys, gameContext[socket.name],
@@ -57,17 +61,18 @@ io.on('connection', (socket) => {
         console.log("\nA user disconnected")
         delete gameContext[socket.name]
     })
-    socket.on('create-id', (name) => {
+    socket.on('create-id', ({name, color}) => {
         console.log("name", name)
+        console.log("color", color)
         console.log("gameContext", gameContext)
         if (name in gameContext) {
             socket.emit('name-taken', name)
         } else {
             socket.name = name
             gameContext[name] = {
-                posx: 100,
-                posy: 50,
-                color: _.sample(["red", "green", "blue"]),
+                posx: util.random(gameContext.blockSize, gameContext.mapSize.width),
+                posy: util.random(gameContext.blockSize, gameContext.mapSize.height),
+                color: color.toLowerCase(),
                 score: 0
             }
             console.log("newGameContext", gameContext)
@@ -75,7 +80,10 @@ io.on('connection', (socket) => {
             // io.sockets.emit('game-context', gameContext)
         }
     })
-    socket.on('game-context', (userid) => {
+    socket.on('game-context', (user) => {
+        const userid = user.name
+        const color = user.color
+
         if (userid in gameContext) {
 
             console.log("USER ID PRESENT", gameContext)
@@ -85,9 +93,9 @@ io.on('connection', (socket) => {
             console.log("USER ID NOT PRESENT", gameContext)
             socket.name = userid
             gameContext[userid] = {
-                posx: 100,
-                posy: 50,
-                color: _.sample(["red", "green", "blue"]),
+                posx: util.random(gameContext.blockSize, gameContext.mapSize.width),
+                posy: util.random(gameContext.blockSize, gameContext.mapSize.height),
+                color: color.toLowerCase(),
                 score: 0
             }
             // socket.emit('game-context', gameContext)

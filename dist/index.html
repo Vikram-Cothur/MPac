@@ -12,7 +12,8 @@
         }
     </style>
     <link rel="stylesheet" type="text/css" href="/index.css">
-    <script data-ad-client="ca-pub-6574406980756529" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script data-ad-client="ca-pub-6574406980756529" async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 
 <body>
@@ -24,8 +25,43 @@
     </canvas>
     <div class="inactive" id="form">
         <label>ZaPac</label>
-        <input type="text" id="userid" placeholder="Username" />
-        <button id="submit">Use</button>
+        <div class="form">
+            <div class="form-group">
+                <span>Pick a name</span>
+                <input type="text" id="userid" />
+            </div>
+            <div class="form-group">
+                <span>Pick a color</span>
+                <!-- <input type="text" id="color"  /> -->
+                <select id="color">
+                    <option>Red</option>
+                    <option>Blue</option>
+                    <option>Green</option>
+                    <option>Yellow</option>
+                    <option>Black</option>
+
+                </select>
+            </div>
+            <button id="submit">Play</button>
+        </div>
+        <div class="instructions">
+            <div class="instructions-label">How to Play</div>
+            <div>
+                In this zapac world, you need to eat others to survive. You eat purple food to increase your
+                score.
+            </div>
+            <div>
+                You can eat the other player if you have a better score.
+            </div>
+            <div>
+                Or your score will be halved if you get eaten.
+            </div>
+            <div>
+                Use WASD for movement and get close to eat.
+            </div>
+
+
+        </div>
     </div>
 
 </body>

@@ -13,19 +13,32 @@ export default class Keyboard {
         }
         window.onkeydown= (ev)=>this.pressDown(ev)
         window.onkeyup = (ev)=>this.pressUp(ev)
+        
+        this.interval = setInterval(()=>{
+            if(this.keysPressed.length != 0 ){
+                this.socket.handleInput({ keys: this.keysPressed })
 
+            }
+        }, 50)
     }
     pressDown(ev) {
         //console.log(this.keysPressed)
+        // if (this.keyMask.includes(ev.key)) {
+        //     if(!this.keysPressed.includes(ev.key)){
+        //         this.keysPressed = _.concat(this.keysPressed, ev.key)
+        //     }
+        //     console.log(this.keysPressed)
+        //     this.socket.handleInput({ keys: this.keysPressed })
+        // }
         if (this.keyMask.includes(ev.key)) {
-            if(!this.keysPressed.includes(ev.key)){
-                this.keysPressed = _.concat(this.keysPressed, ev.key)
+            if(this.keysPressed.includes(ev.key)){
+                return
             }
-            this.socket.handleInput({ keys: this.keysPressed })
+            this.keysPressed = _.concat(this.keysPressed, ev.key)
+            console.log(this.keysPressed)
         }
     }
     pressUp(ev) {
-        console.log(this.keysPressed)
         if (this.keyMask.includes(ev.key)) {
             _.pull(this.keysPressed, ev.key);
         }

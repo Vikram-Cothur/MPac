@@ -1,35 +1,93 @@
+*{
+    font-family:  Helvetica, sans-serif;
+}
 .inactive {
     display: none;
 }
 .active {
-
+    display: flex;
+    flex-direction: column;
     position: fixed;
     top: 50%;
     left: 50%;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
     transform: translate(-50%, -50%);
+    height: 100vh;
+}
+.form {
+    
     background-color: purple;
     /* height: 10vh; */
-    padding-top: 2vh;
-    padding-bottom: 2vh;
+    /* padding-top: 2vh; */
+    padding: 4vh;
     min-width: 180px;
-    width: 15vw;
+    max-width: 15vw;
     justify-content:  center;
     align-items: center;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
 }
-.active * {
-    margin: 5px;
+/* .active * {
+    margin: 8px;
+    margin-top: 1px;
+} */
+.active div{
+    display: flex;
+    /* background-color: red; */
+    flex-direction: column;
+    margin: 10px;
+    margin-top: 0px;
+    width: 90%;
+}
+
+.active span {
+    color: white;
 }
 .active button {
-    padding-left: 10px;
-    padding-right: 10px;
+    margin-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .active label {
-    color: white;
+    color: purple;
     position: relative;
+    /* top: -5vh; */
     font-weight: bolder;
     letter-spacing: 1px;
-    font-size: larger;
+    font-size: 26px;
+}
+
+.form-group  {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* align-items: center; */
+    /* background-color: red; */
+
+}
+.form-group span{
+    /* background-color: rebeccapurple; */
+    padding: 8px;
+    padding-left: 0px;
+}
+.instructions {
+    background-color: purple;
+    padding: 4vh;
+    min-width: 180px;
+    max-width: 30vw;
+    width: 15vw;
+    justify-content:  center;
+    align-items: center;
+
+    border-radius: 10px;
+    color: white;
+}
+.instructions-label{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
 }

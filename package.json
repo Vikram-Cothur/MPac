@@ -6,7 +6,7 @@
     "start": "nodemon index.js",
     "webpack": "webpack --mode=development --watch",
     "build": "webpack",
-    "prod": "NODE_ENV=production forever start index.js"
+    "prod": "NODE_ENV=production webpack forever start index.js"
   },
   "author": "Vikram Cothur",
   "license": "ISC",

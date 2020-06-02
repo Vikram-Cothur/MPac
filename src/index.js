@@ -4,6 +4,7 @@ import nipplejs from 'nipplejs'
 var game = null
 window.onload = () => {
     var userid = sessionStorage.getItem("userid")
+    var color = sessionStorage.getItem("color")
 
 
     var socket = io({
@@ -16,20 +17,23 @@ window.onload = () => {
         socket.io.opts.transports = ['polling', 'websocket'];
     });
     socket.on('connect', () => {
-        if (!userid) {
+        if (!userid || !color) {
             //userid = "vikram" + Math.floor(Math.random() * 100)
             const form = document.querySelector("#form")
             form.className = "active"
             const btn = document.querySelector("#submit")
             const onsubmit = ()=>{
                 const userid = document.querySelector("#userid").value
-                socket.emit('create-id', userid)
+                const color = document.querySelector("#color").value
+                console.log(color, document.querySelector("#color"))
+                socket.emit('create-id', {name:userid, color:color})
                 sessionStorage.setItem("userid", userid)
+                sessionStorage.setItem("color", color)
                 form.className = "inactive"
             }
             btn.addEventListener('click',onsubmit)
         } else {
-            socket.emit('game-context', userid)
+            socket.emit('game-context', {name:userid, color:color})
         }
     })
     socket.on('name-taken', name => {
