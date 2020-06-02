@@ -71,6 +71,7 @@ io.on('connection', (socket) => {
                 score: 0
             }
             console.log("newGameContext", gameContext)
+            socket.emit("refresh",{reason:"player added"})
             // io.sockets.emit('game-context', gameContext)
         }
     })

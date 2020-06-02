@@ -62,7 +62,10 @@ window.onload = () => {
 
     })
 
-    
+    socket.on('refresh', reason => {
+        window.location.reload(true)
+        console.log(reason)
+    })
 
     console.log("Started..")
 
