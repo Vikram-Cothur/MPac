@@ -8,3 +8,29 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+#form {
+    background-color: purple;
+    /* height: 10vh; */
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    width: 15vw;
+    justify-content:  center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+}
+#form * {
+    margin: 5px;
+}
+#form button {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#form label {
+    color: white;
+    position: relative;
+    font-weight: bolder;
+    letter-spacing: 1px;
+    font-size: larger;
+}
