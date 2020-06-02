@@ -2,17 +2,16 @@
     display: none;
 }
 .active {
-    display: block;
+
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-#form {
     background-color: purple;
     /* height: 10vh; */
     padding-top: 2vh;
     padding-bottom: 2vh;
+    min-width: 180px;
     width: 15vw;
     justify-content:  center;
     align-items: center;
@@ -20,14 +19,14 @@
     flex-direction: column;
     border-radius: 10px;
 }
-#form * {
+.active * {
     margin: 5px;
 }
-#form button {
+.active button {
     padding-left: 10px;
     padding-right: 10px;
 }
-#form label {
+.active label {
     color: white;
     position: relative;
     font-weight: bolder;
