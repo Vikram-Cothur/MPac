@@ -1,7 +1,8 @@
 import io from 'socket.io-client';
 import Game from './game/game'
+import Mother from './game/mother'
 import nipplejs from 'nipplejs'
-var game = null
+var mother = null
 window.onload = () => {
     var userid = sessionStorage.getItem("userid")
     var color = sessionStorage.getItem("color")
@@ -54,14 +55,15 @@ window.onload = () => {
             });
             alert("There are currently some issues in the mobile version. Please open with a pc")
         }
-        if (game === null) {
+        if (mother === null) {
             // console.log("GAME IS UNDEFINED:", gameContext)
-            game = new Game(socket = socket, userid = userid, gameContext = gameContext, nipple)
-            game.init()
-            window.requestAnimationFrame(() => game.loop())
+            
+            mother = new Mother(socket, userid, gameContext, nipple)
+            
+           console.log(mother)
         } else {
-            //console.log("GAME IS DEFINED:", gameContext)
-            game.gameContext = gameContext
+            // console.log("GAME IS DEFINED:", gameContext)
+            mother.update(gameContext)
         }
 
     })

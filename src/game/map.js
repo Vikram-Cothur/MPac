@@ -4,11 +4,11 @@ export default class Map {
         console.log("MAP")
         this.socket = socket
         this.gameContext = gameContext
-        this.blockSize = gameContext.blockSize
+        this.blockSize = gameContext.get().blockSize
         socket.getMap((map)=>this.getMap(map))
     }
     getMap(map){
-        console.log("MAP -> ",map)
+        // console.log("MAP -> ",map)
         this.blocks = map.blocks
         this.ready = true
     }

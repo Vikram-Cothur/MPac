@@ -4,9 +4,9 @@ export default class Food {
         console.log("ctx", ctx)
     }
     draw(gameContext) {
-        const size = gameContext.foodSize
+        const size = gameContext.get().foodSize
 
-        _.each(gameContext.food, (v, k) => {
+        _.each(gameContext.get().food, (v, k) => {
             this.ctx.fillStyle = 'purple';
             // ctx.fillText(k, v.posx, v.posy-5)
             this.ctx.beginPath();

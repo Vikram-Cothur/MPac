@@ -3,7 +3,7 @@ import Joystick from './joystick'
 import Keyboard from './keyboard'
 import Map from './map'
 import _ from 'lodash'
-import Players from './players'
+import PlayerGroup from './playergroup'
 import Food from './food'
 
 export default class Game {
@@ -17,10 +17,11 @@ export default class Game {
             this.controller = new Joystick(joystick, this.socket)
         else 
             this.controller = new Keyboard(this.socket)
-        this.canvas.width = this.gameContext.mapSize.width
-        this.canvas.height = this.gameContext.mapSize.height
+        console.log(this.gameContext)
+        this.canvas.width = this.gameContext.get().mapSize.width
+        this.canvas.height = this.gameContext.get().mapSize.height
         this.Map = new Map(this.socket, this.gameContext)
-        this.players = new Players(this.ctx, this.userid)
+        this.players = new PlayerGroup(this.ctx, this.gameContext, this.userid)
         this.food = new Food(this.ctx)
         console.log("Socket ", socket)
         console.log("Game Context",gameContext)
@@ -29,16 +30,7 @@ export default class Game {
         var ctx = this.ctx
         ctx.beginPath();
         ctx.arc(100, 75, 50, 0, 2 * Math.PI);
-        ctx.stroke();
-        this.background = ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
-        this.background.addColorStop(0, "red");
-        this.background.addColorStop(0.1, "white");
-        this.background.addColorStop(0.2, "black");
-        this.background.addColorStop(0.3, "green");
-        this.background.addColorStop(0.4, "purple");
-        this.background.addColorStop(1, "white");
-
-        
+        ctx.stroke();        
     }
     loop() {
         var ctx = this.ctx
@@ -47,7 +39,7 @@ export default class Game {
             ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
             this.food.draw(this.gameContext)
             this.Map.drawMap(ctx)
-            this.players.draw(this.gameContext)
+            this.players.draw()
             
         }
         window.requestAnimationFrame(() => this.loop())

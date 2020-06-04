@@ -9,15 +9,16 @@ app.use(express.static(__dirname + '/dist'));
 
 
 gameContext = {
-    mapSize: { height: 32 * 30, width: 32 * 50 },
-    blockSize: 32,
-    foodSize: 24
+    mapSize: { height: util.consts.blockSize * (40 + util.consts.outterBlocks), width: util.consts.blockSize * (70 + util.consts.outterBlocks)},
+    blockSize: util.consts.blockSize,
+    foodSize: util.consts.foodSize,
+    users: {}
 }
 const blocks = util.generateMap(gameContext.mapSize, gameContext.blockSize)
 const food = util.generateFood(null, gameContext.mapSize, blocks, gameContext.blockSize)
 gameCycle = setInterval(() => {
     io.emit('game-context', gameContext);
-}, 25);
+}, 20);
 foodCycle = setInterval(() => {
     gameContext.food = util.generateFood(food, gameContext.mapSize, blocks, gameContext.blockSize)
 }, 1000)
@@ -40,9 +41,9 @@ io.on('connection', (socket) => {
             return
         }
         
-
-        gameContext[socket.name] = util.handleInput(
-            input.keys, gameContext[socket.name],
+        // console.log(input, socket.name)
+        gameContext.users[socket.name] = util.handleInput(
+            input.keys, gameContext.users[socket.name],
             blocks, gameContext.blockSize,
             gameContext.food, gameContext.foodSize)
         //io.sockets.emit('position', { [socket.name]: gameContext[socket.name] })
@@ -54,27 +55,22 @@ io.on('connection', (socket) => {
             return
         }
         // console.log(input, gameContext[socket.name])
-        gameContext[socket.name] = util.handleInputJoystick(input.vector, gameContext[socket.name])
-        io.sockets.emit('position', { [socket.name]: gameContext[socket.name] })
+        gameContext.users[socket.name] = util.handleInputJoystick(input.vector, gameContext.users[socket.name])
+        io.sockets.emit('position', { [socket.name]: gameContext.users[socket.name] })
     })
     socket.on('disconnect', () => {
         console.log("\nA user disconnected")
-        delete gameContext[socket.name]
+        delete gameContext.users[socket.name]
     })
     socket.on('create-id', ({name, color}) => {
         console.log("name", name)
         console.log("color", color)
         console.log("gameContext", gameContext)
-        if (name in gameContext) {
+        if (name in gameContext.users) {
             socket.emit('name-taken', name)
         } else {
             socket.name = name
-            gameContext[name] = {
-                posx: util.random(gameContext.blockSize, gameContext.mapSize.width),
-                posy: util.random(gameContext.blockSize, gameContext.mapSize.height),
-                color: color.toLowerCase(),
-                score: 0
-            }
+            util.initUser(color, gameContext)
             console.log("newGameContext", gameContext)
             socket.emit("refresh",{reason:"player added"})
             // io.sockets.emit('game-context', gameContext)
@@ -92,12 +88,7 @@ io.on('connection', (socket) => {
             // if user id not present add it
             console.log("USER ID NOT PRESENT", gameContext)
             socket.name = userid
-            gameContext[userid] = {
-                posx: util.random(gameContext.blockSize, gameContext.mapSize.width),
-                posy: util.random(gameContext.blockSize, gameContext.mapSize.height),
-                color: color.toLowerCase(),
-                score: 0
-            }
+            util.initUser(userid, color, gameContext)
             // socket.emit('game-context', gameContext)
         }
     })
