@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const consts = {
-    outterBlocks:12,
-    blockSize:32,
-    foodSize:24
+    outterBlocks: 12,
+    blockSize: 32,
+    foodSize: 24
 }
 const initUser = (userid, color, gameContext) => {
     return gameContext.users[userid] = {
@@ -11,7 +11,8 @@ const initUser = (userid, color, gameContext) => {
         color: color.toLowerCase(),
         score: 0,
         justEaten: 0,
-        justEatenPlayer: {num:0, color:'black'}
+        justEatenPlayer: { num: 0, color: 'black' },
+        special: false
     }
 }
 const checkForCollision = (userObj, blocks, blockSize) => {
@@ -84,19 +85,32 @@ const handlePlayerEatPlayer = (gameObj) => {
                 (curPlayer.posy + s > otherPlayer.posy)
             ) {
                 console.log("Players colliding")
-                if (curPlayer.score == otherPlayer.score) {
+                if (curPlayer.special) {
+                    gameObj.users[players[j]].score = Math.floor(gameObj.users[players[j]].score / 2)
+                    gameObj.users[players[j]].posx = randomX(gameObj)
+                    gameObj.users[players[j]].posy = randomY(gameObj)
+                    gameObj.users[players[i]].special = false //reset after eating
+                    gameObj.users[players[i]].justEatenPlayer.color = gameObj.users[players[j]].color
+                } else if (otherPlayer.special) {
+                    gameObj.users[players[i]].score = Math.floor(gameObj.users[players[j]].score / 2)
+                    gameObj.users[players[i]].posx = randomX(gameObj)
+                    gameObj.users[players[i]].posy = randomY(gameObj)
+                    gameObj.users[players[j]].special = false //reset after eating
+                    gameObj.users[players[i]].justEatenPlayer.color = gameObj.users[players[i]].color
+                }
+                else if (curPlayer.score == otherPlayer.score) {
                     continue
                 }
                 else if (curPlayer.score > otherPlayer.score) {
                     console.log("deleting " + players[j])
-                    gameObj.users[players[j]].score = Math.floor(gameObj.users[players[j]].score/2)
+                    gameObj.users[players[j]].score = Math.floor(gameObj.users[players[j]].score / 2)
                     gameObj.users[players[j]].posx = randomX(gameObj)
                     gameObj.users[players[j]].posy = randomY(gameObj)
                     gameObj.users[players[i]].justEatenPlayer.num = 10 // not a typo
                     gameObj.users[players[i]].justEatenPlayer.color = gameObj.users[players[j]].color // not a typo
                 } else {
                     console.log("deleting " + players[i])
-                    gameObj.users[players[i]].score = Math.floor(gameObj.users[players[i]].score/2)
+                    gameObj.users[players[i]].score = Math.floor(gameObj.users[players[i]].score / 2)
                     gameObj.users[players[i]].posx = randomX(gameObj)
                     gameObj.users[players[i]].posy = randomY(gameObj)
                     gameObj.users[players[j]].justEatenPlayer.num = 10 // not a typo
@@ -130,17 +144,25 @@ const handlePlayerEatFood = (userObj, food, foodSize) => {
             (userObj.posy < (y + s)) &&
             ((userObj.posy + s) > y)
         ) {
+            if (v.length > 2 && v[2] == 1) { //special food is consumed
+                userObj.special = true
+                console.log("ATE FOOD")
+                collided = true
+                food.splice(i, 1)
+                userObj.score += 1
+            } else {
 
-        console.log("ATE FOOD")
-        collided = true
-        food.splice(i, 1)
-        userObj.score += 1
-        userObj.justEaten = 8
-    }
-})
+                console.log("ATE SPECIAL FOOD")
+                collided = true
+                food.splice(i, 1)
+                userObj.score += 1
+                userObj.justEaten = 8
+            }
+        }
+    })
 
 
-return userObj
+    return userObj
 }
 const handleInputJoystick = (vector, userObj) => {
     speed = 10
@@ -151,14 +173,14 @@ const handleInputJoystick = (vector, userObj) => {
 
 const generateMap = ({ height, width }, blockSize) => {
     var blocks = []
-    const startx = blockSize*consts.outterBlocks
-    const starty = blockSize*consts.outterBlocks
-    const endx = width - (blockSize*consts.outterBlocks)
-    const endy = height - (blockSize*consts.outterBlocks)
+    const startx = blockSize * consts.outterBlocks
+    const starty = blockSize * consts.outterBlocks
+    const endx = width - (blockSize * consts.outterBlocks)
+    const endy = height - (blockSize * consts.outterBlocks)
     for (var x = 0; x < width; x += blockSize) {
         for (var y = 0; y < height; y += blockSize) {
             if (x < startx || y < starty
-                || x > endx|| y > endy) {
+                || x > endx || y > endy) {
                 blocks.push([x, y])
             }
         }
@@ -178,17 +200,22 @@ const generateFood = (currentFood, { height, width }, blocks, blockSize) => {
         if (checkForCollision({ posx: x, posy: y }, blocks, blockSize)) {
             continue
         } else {
-            food.push([x, y])
+            if (Math.random() < 0.05) {
+                food.push([x, y, 1])
+                console.log('special')
+            } else {
+                food.push([x, y])
+            }
         }
         // console.log("food", [x, y])
     }
     return food
 }
-const randomX = (gameObj) =>{
-    return _.random(consts.outterBlocks*gameObj.blockSize, gameObj.mapSize.width - (consts.outterBlocks*gameObj.blockSize))
+const randomX = (gameObj) => {
+    return _.random(consts.outterBlocks * gameObj.blockSize, gameObj.mapSize.width - (consts.outterBlocks * gameObj.blockSize))
 }
-const randomY = (gameObj) =>{
-    return _.random(consts.outterBlocks*gameObj.blockSize, gameObj.mapSize.height - (consts.outterBlocks*gameObj.blockSize))
+const randomY = (gameObj) => {
+    return _.random(consts.outterBlocks * gameObj.blockSize, gameObj.mapSize.height - (consts.outterBlocks * gameObj.blockSize))
 
 }
 module.exports = {
