@@ -13,7 +13,7 @@ export default class Food {
         _.each(gameContext.get().food, (v, k) => {
             if (v.length > 2 && v[2] == 1) {
 
-                console.log("special")
+                // console.log("special")
                 //checking if special ball is activated
                 this.ctx.fillStyle = this.createGradient();
                 // ctx.fillText(k, v.posx, v.posy-5)
