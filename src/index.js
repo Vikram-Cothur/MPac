@@ -23,6 +23,8 @@ window.onload = () => {
             const form = document.querySelector("#form")
             form.className = "active"
             const btn = document.querySelector("#submit")
+            const createRoom = document.querySelector("#create-room")
+            const joinRoom = document.querySelector("#join-room")
             const onsubmit = ()=>{
                 const userid = document.querySelector("#userid").value
                 const color = document.querySelector("#color").value
@@ -32,6 +34,14 @@ window.onload = () => {
                 sessionStorage.setItem("color", color)
                 form.className = "inactive"
             }
+            const onCreateRoom = ()=>{
+                window.location.href = "/room.html"
+            }
+            const onJoinRoom = ()=>{
+                window.location.href = "/room.html"
+            }
+            createRoom.addEventListener('click', onCreateRoom)
+            joinRoom.addEventListener('click', onJoinRoom)
             btn.addEventListener('click',onsubmit)
         } else {
             socket.emit('game-context', {name:userid, color:color})

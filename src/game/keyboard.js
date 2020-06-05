@@ -22,25 +22,19 @@ export default class Keyboard {
         }, 50)
     }
     pressDown(ev) {
-        //console.log(this.keysPressed)
-        // if (this.keyMask.includes(ev.key)) {
-        //     if(!this.keysPressed.includes(ev.key)){
-        //         this.keysPressed = _.concat(this.keysPressed, ev.key)
-        //     }
-        //     console.log(this.keysPressed)
-        //     this.socket.handleInput({ keys: this.keysPressed })
-        // }
-        if (this.keyMask.includes(ev.key)) {
-            if(this.keysPressed.includes(ev.key)){
+        const key = ev.key.toLowerCase()
+        if (this.keyMask.includes(key)) {
+            if(this.keysPressed.includes(key)){
                 return
             }
-            this.keysPressed = _.concat(this.keysPressed, ev.key)
+            this.keysPressed = _.concat(this.keysPressed, key)
             console.log(this.keysPressed)
         }
     }
     pressUp(ev) {
-        if (this.keyMask.includes(ev.key)) {
-            _.pull(this.keysPressed, ev.key);
+        const key = ev.key.toLowerCase()
+        if (this.keyMask.includes(key)) {
+            _.pull(this.keysPressed, key);
         }
     }
 }

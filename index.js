@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
             socket.emit('name-taken', name)
         } else {
             socket.name = name
-            util.initUser(color, gameContext)
+            util.initUser(name, color, gameContext)
             console.log("newGameContext", gameContext)
             socket.emit("refresh",{reason:"player added"})
             // io.sockets.emit('game-context', gameContext)

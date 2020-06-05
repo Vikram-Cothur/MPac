@@ -70,12 +70,12 @@
 }
 .form-group span{
     /* background-color: rebeccapurple; */
-    padding: 8px;
-    padding-left: 0px;
+    /* padding: 8px;
+    padding-left: 0px; */
 }
 .instructions {
     background-color: purple;
-    padding: 4vh;
+    padding: 2vh;
     min-width: 180px;
     max-width: 30vw;
     width: 15vw;

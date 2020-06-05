@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MPac</title>
+    <title>ZaPac</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <style>
         * {
             padding: 0;
@@ -24,36 +26,36 @@
 
     </canvas>
     <div class="inactive" id="form">
-        <label>ZaPac</label>
+        <label class="title">ZaPac</label>
         <div class="form">
-            <div class="form-group">
-                <span>Pick a name</span>
-                <input type="text" id="userid" />
+            <div class="control form-group">
+                <span class="label">Pick a name</span>
+
+                <input class="input is-small" type="text" id="userid" />
             </div>
-            <div class="form-group">
-                <span>Pick a color</span>
-                <!-- <input type="text" id="color"  /> -->
-                <select id="color">
+            <div class="control form-group">
+                <span class="label">Pick a color</span>
+                <select class="select is-small" id="color">
                     <option>Red</option>
                     <option>Blue</option>
                     <option>Green</option>
-                    <option>Yellow</option>
                     <option>Black</option>
-
                 </select>
             </div>
-            <button id="submit">Play</button>
+            <button  id="submit">Play</button>
+            <button  id="create-room">Create a room</button>
+            <button  id="join-room">Join a room</button>
         </div>
-        <div class="instructions">
+        <div class="instructions content">
             <div class="instructions-label">How to Play</div>
-            <div>
+            <div class="content">
                 In this zapac world, you need to eat others to survive. You eat purple food to increase your
                 score.
             </div>
-            <div>
+            <div class="content">
                 You can eat the other player if you have a better score.
             </div>
-            <div>
+            <div class="content">
                 Or your score will be halved if you get eaten.
             </div>
             <div>
