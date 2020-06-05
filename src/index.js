@@ -69,7 +69,7 @@ window.onload = () => {
             // console.log("GAME IS UNDEFINED:", gameContext)
             
             mother = new Mother(socket, userid, gameContext, nipple)
-            
+            window.scrollTo(500,350)
            console.log(mother)
         } else {
             // console.log("GAME IS DEFINED:", gameContext)
