@@ -96,13 +96,7 @@ io.on('connection', (socket) => {
         console.log(error)
     })
 })
-var env = process.env.NODE_ENV || 'development';
-if (env === 'development') {
-    server.listen(3001, () => {
-        console.log("STARTED LISTENING")
-    })
-} else {
-    server.listen(80, () => {
-        console.log("STARTED LISTENING at 80")
-    })
-}
+// var env = process.env.NODE_ENV || 'development';
+server.listen(3001, () => {
+    console.log("STARTED LISTENING")
+})
