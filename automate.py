@@ -23,6 +23,7 @@ else:
     print("Waiting for pexpect to exit")
     git.wait()
     os.system("git stash drop")
+    os.system("yarn build")
     os.system("pm2 stop index.js")
     os.system("pm2 start index.js")
 
