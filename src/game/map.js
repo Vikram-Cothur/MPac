@@ -17,5 +17,9 @@ export default class Map {
         this.blocks.forEach(block => {
             ctx.fillRect(block[0], block[1], this.blockSize, this.blockSize );
         });
+        this.gameContext.get().userBlocks.forEach(block => {
+            ctx.fillRect(block[0], block[1], this.blockSize, this.blockSize );
+        })
     }
+    
 }

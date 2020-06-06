@@ -21,6 +21,16 @@ export default class Food {
                 //v[0]+size/2 because server thinks this is a rectangle. uncomment stroke rect to understand
                 this.ctx.arc(v[0] + size / 2, v[1] + size / 2, size / 2, 0, 2 * Math.PI);
                 this.ctx.fill();
+            } else if (v.length > 2 && v[2] == 2) {
+
+                // console.log("special")
+                //checking if special ball is activated
+                this.ctx.fillStyle = "black"
+                // ctx.fillText(k, v.posx, v.posy-5)
+                this.ctx.beginPath();
+                //v[0]+size/2 because server thinks this is a rectangle. uncomment stroke rect to understand
+                this.ctx.arc(v[0] + size / 2, v[1] + size / 2, size / 2, 0, 2 * Math.PI);
+                this.ctx.fill();
             } else {
                 this.ctx.fillStyle = 'purple';
                 // ctx.fillText(k, v.posx, v.posy-5)

@@ -4,7 +4,7 @@ export default class Keyboard {
         this.keysPressed = []
         this.keyMask = ["w","a","s","d"]
         this.socket = socket
-        
+        this.latency = 50
         if (window.onkeydown){
             window.onkeydown = null
         }
@@ -19,7 +19,7 @@ export default class Keyboard {
                 this.socket.handleInput({ keys: this.keysPressed })
 
             }
-        }, 50)
+        }, this.latency)
     }
     pressDown(ev) {
         const key = ev.key.toLowerCase()

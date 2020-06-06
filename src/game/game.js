@@ -5,6 +5,7 @@ import Map from './map'
 import _ from 'lodash'
 import PlayerGroup from './playergroup'
 import Food from './food'
+import Mouse from './mouse'
 
 export default class Game {
     constructor(socket, userid, gameContext, joystick) {
@@ -17,6 +18,7 @@ export default class Game {
             this.controller = new Joystick(joystick, this.socket)
         else 
             this.controller = new Keyboard(this.socket)
+        this.mouse = new Mouse(this.socket, this.gameContext, this.userid)
         console.log(this.gameContext)
         this.canvas.width = this.gameContext.get().mapSize.width
         this.canvas.height = this.gameContext.get().mapSize.height

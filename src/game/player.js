@@ -1,3 +1,4 @@
+
 export default class Player {
     constructor(gameContext, name, playerObj, isUser) {
         this.name = name
@@ -8,14 +9,15 @@ export default class Player {
         this.speed = 14
         this.angleA = Math.random() * 360                            // start angle (for HSL)
         this.angleB = Math.random() * 360
-        this.stepA = 1.2*1.5
-        this.stepB = 0.7*1.5;
+        this.stepA = 1.2 * 1.5
+        this.stepB = 0.7 * 1.5;
+
     }
     draw(ctx) {
 
         const v = this.gameContext.get().users[this.name]
         const o = this.gameContext.getOld().users[this.name] || v
-
+        let justEaten = v.justEaten
 
         let posx = v.posx
         let posy = v.posy
@@ -28,9 +30,10 @@ export default class Player {
 
         ctx.textAlign = "center";
         ctx.font = "16px Arial";
+        let decrementSpecial = null
         if (v.special) {
             ctx.fillStyle = this.createGradient(ctx)
-        }else {
+        } else {
             ctx.fillStyle = v.color;
         }
         ctx.fillText(this.name, posx + (this.blockSize / 2), posy - 5)
@@ -38,13 +41,10 @@ export default class Player {
         ctx.fillStyle = "white";
         ctx.fillText(v.score, posx + (this.blockSize / 2), posy + 20)
         //just Eaten animation
-        if (v.justEaten > 0) {
-            const eaten = v.justEaten
-            console.log(v.justEaten)
+        if (justEaten > 0) {
+            console.log(justEaten)
             ctx.lineWidth = 5
-            for (var i = 0; i < eaten; i++) {
-                // ctx.strokeStyle = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-                //rgb(128,0,128)
+            for (var i = 0; i < justEaten; i++) {
                 const color = 800080
                 ctx.strokeStyle = "#" + (color - (i))
                 ctx.strokeRect(posx - i, posy - i, this.blockSize + (i * 2), this.blockSize + (i * 2))
@@ -56,15 +56,35 @@ export default class Player {
             console.log(v.justEatenPlayer)
             ctx.lineWidth = 5
             for (var i = 0; i < eaten; i++) {
-                // ctx.strokeStyle = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-                //rgb(128,0,128)
                 const color = v.justEatenPlayer.color
                 ctx.strokeStyle = color
                 ctx.strokeRect(posx - i, posy - i, this.blockSize + (i * 2), this.blockSize + (i * 2))
             }
 
         }
-      
+        for (var i = 0; i < v.blocks; i++) {
+            const s = 3
+            ctx.strokeStyle = "black"
+            ctx.lineWidth = 5
+            ctx.beginPath();
+            if(i==0){
+                ctx.moveTo(posx, posy);
+                ctx.lineTo(posx+this.blockSize, posy);
+            } else if(i==1){
+                ctx.moveTo(posx+this.blockSize, posy);
+                ctx.lineTo(posx+this.blockSize, posy+this.blockSize);
+                
+            }else if(i==2){
+                ctx.moveTo(posx+this.blockSize, posy+this.blockSize);
+                ctx.lineTo(posx, posy+this.blockSize);
+                
+            }else if(i==3){
+                ctx.moveTo(posx, posy+this.blockSize);
+                ctx.lineTo(posx, posy);
+
+            }
+            ctx.stroke();
+        }
         if (this.isUser) {
             this.scrollWindowCenter(v)
         }

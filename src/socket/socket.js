@@ -14,6 +14,9 @@ class Socket {
     handlePosition(position){
         this.gameObj.handlePosition(position)
     }
+    handlePressInput(input){
+        this.emit('user-click-input', input)
+    }
     emit(event, msg){
         if(typeof msg === "undefined"){
             msg = {userid:this.userid}

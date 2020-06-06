@@ -11,8 +11,10 @@ const initUser = (userid, color, gameContext) => {
         color: color.toLowerCase(),
         score: 0,
         justEaten: 0,
+        justEatenSpecial: 0,
         justEatenPlayer: { num: 0, color: 'black' },
-        special: false
+        special: false,
+        blocks: 0
     }
 }
 const checkForCollision = (userObj, blocks, blockSize) => {
@@ -33,16 +35,28 @@ const checkForCollision = (userObj, blocks, blockSize) => {
             (userObj.posy + s > y)
         )
         ) {
-
+            // userObj.posx -= (x-userObj.posx)
+            // userObj.posy -= (y-userObj.posy)
             console.log("HIT")
             collided = true
         }
     })
     return collided
 }
-const handleInput = (keys, userObj, blocks, blockSize, food, foodSize) => {
+const handleInput = (keys, blocks, gameContext, userid) => {
     //if player has just eaten, minus the eaten flag
+    const food = gameContext.food
+    const foodSize = gameContext.foodSize
+    const blockSize = gameContext.blockSize
+    const userBlocks = gameContext.userBlocks
+    let userObj = gameContext.users[userid]
+
     userObj.justEaten = userObj.justEaten > 0 ? userObj.justEaten - 1 : 0
+    userObj.justEatenSpecial = userObj.justEatenSpecial > 0 ? userObj.justEatenSpecial - 1 : 0
+
+    if (userObj.special && userObj.justEatenSpecial <= 0) {
+        userObj.special = false
+    }
     userObj.justEatenPlayer.num = userObj.justEatenPlayer.num > 0 ? userObj.justEatenPlayer.num - 1 : 0
     speed = 14
     const ogUserObj = Object.assign({}, userObj);
@@ -64,12 +78,22 @@ const handleInput = (keys, userObj, blocks, blockSize, food, foodSize) => {
                 break
         }
     });
-    if (checkForCollision(userObj, blocks, blockSize)) {
+    // if (checkForCollision(userObj, blocks, blockSize)) {
+    //     userObj = Object.assign({}, ogUserObj);
+    // }
+    if (userObj.posx <= consts.outterBlocks * consts.blockSize ||
+        userObj.posx >= gameContext.mapSize.width - (consts.outterBlocks * consts.blockSize) ||
+        userObj.posy <= consts.outterBlocks * consts.blockSize ||
+        userObj.posy >= gameContext.mapSize.height - (consts.outterBlocks * consts.blockSize)) {
+            userObj = Object.assign({}, ogUserObj);
+    }
+    if (checkForCollision(userObj, userBlocks, blockSize)) {
+
         userObj = Object.assign({}, ogUserObj);
     }
     userObj = handlePlayerEatFood(userObj, food, foodSize)
+    gameContext.users[userid] = userObj
 
-    return userObj
 }
 const handlePlayerEatPlayer = (gameObj) => {
     // console.log(gameObj)
@@ -92,11 +116,11 @@ const handlePlayerEatPlayer = (gameObj) => {
                     gameObj.users[players[i]].special = false //reset after eating
                     gameObj.users[players[i]].justEatenPlayer.color = gameObj.users[players[j]].color
                 } else if (otherPlayer.special) {
-                    gameObj.users[players[i]].score = Math.floor(gameObj.users[players[j]].score / 2)
+                    gameObj.users[players[i]].score = Math.floor(gameObj.users[players[i]].score / 2)
                     gameObj.users[players[i]].posx = randomX(gameObj)
                     gameObj.users[players[i]].posy = randomY(gameObj)
                     gameObj.users[players[j]].special = false //reset after eating
-                    gameObj.users[players[i]].justEatenPlayer.color = gameObj.users[players[i]].color
+                    gameObj.users[players[J]].justEatenPlayer.color = gameObj.users[players[i]].color
                 }
                 else if (curPlayer.score == otherPlayer.score) {
                     continue
@@ -146,17 +170,23 @@ const handlePlayerEatFood = (userObj, food, foodSize) => {
         ) {
             if (v.length > 2 && v[2] == 1) { //special food is consumed
                 userObj.special = true
-                console.log("ATE FOOD")
-                collided = true
-                food.splice(i, 1)
-                userObj.score += 1
-            } else {
-
                 console.log("ATE SPECIAL FOOD")
                 collided = true
                 food.splice(i, 1)
                 userObj.score += 1
-                userObj.justEaten = 8
+                userObj.justEatenSpecial += 100
+            } else if (v.length > 2 && v[2] == 2) {
+                userObj.blocks += 1
+                console.log("ATE BLOCK FOOD")
+                collided = true
+                food.splice(i, 1)
+            } else {
+
+                console.log("ATE FOOD")
+                collided = true
+                food.splice(i, 1)
+                userObj.score += 1
+                userObj.justEaten += 8
             }
         }
     })
@@ -203,6 +233,9 @@ const generateFood = (currentFood, { height, width }, blocks, blockSize) => {
             if (Math.random() < 0.05) {
                 food.push([x, y, 1])
                 console.log('special')
+            } else if (Math.random() < 0.05) {
+                console.log('block ball')
+                food.push([x, y, 2])
             } else {
                 food.push([x, y])
             }
@@ -218,6 +251,17 @@ const randomY = (gameObj) => {
     return _.random(consts.outterBlocks * gameObj.blockSize, gameObj.mapSize.height - (consts.outterBlocks * gameObj.blockSize))
 
 }
+const vanishAfter = (secs, gameContext, pos) => {
+    var vanish = setTimeout(() => {
+        gameContext.userBlocks.map((v, i) => {
+            if (v[0] === pos[0] && v[1] === pos[1]) {
+                gameContext.userBlocks.splice(i, 1)
+            }
+        })
+        clearTimeout(vanish)
+        console.log("Deleting ", vanish, " and block")
+    }, secs * 1000)
+}
 module.exports = {
     handleInput,
     handleInputJoystick,
@@ -228,5 +272,6 @@ module.exports = {
     consts,
     randomX,
     randomY,
-    initUser
+    initUser,
+    vanishAfter
 }
