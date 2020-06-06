@@ -12,7 +12,7 @@ else:
     password = getpass()
     os.chdir("/root/iogames/MPac")
     os.system("git stash push")
-    git = Popen('git pull origin master'.split(" "), stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True, bufsize=0)
+    git = Popen('git pull origin master'.split(" "), stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
     git.stdin.write("fire-hound\r")
     git.stdin.write(f"{password}\r")
     git.stdin.close()
