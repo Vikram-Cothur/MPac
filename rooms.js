@@ -10,30 +10,23 @@ app.use(express.static(__dirname + '/dist'));
 var roomno = 1
 
 rooms = {
-    room1: {
-        blocks: [],
-        gameContext: {
+    room1:{
+        gameContext : {
             mapSize: { height: util.consts.blockSize * (40 + util.consts.outterBlocks), width: util.consts.blockSize * (70 + util.consts.outterBlocks) },
             blockSize: util.consts.blockSize,
             foodSize: util.consts.foodSize,
             users: {},
             userBlocks: []
         }
-
+        
     }
 }
 
 
 const startCycle = (room, rooms) => {
-    const gameContext = util.initRoom()
-    rooms[room] = {}
-    rooms[room]["gameContext"] = gameContext
-
+    const gameContext = rooms
     const blocks = util.generateMap(gameContext.mapSize, gameContext.blockSize)
-    rooms[room]["blocks"] = blocks
-
     const food = util.generateFood(null, gameContext.mapSize, blocks, gameContext.blockSize)
-
     gameCycle = setInterval(() => {
         io.sockets.in(room).emit('game-context', gameContext);
     }, 20);
@@ -43,40 +36,21 @@ const startCycle = (room, rooms) => {
     playerEatCycle = setInterval(() => {
         util.handlePlayerEatPlayer(gameContext)
     }, 100)
-    deleteCycles = setInterval(() => {
-        if (Object.keys(gameContext.users).length === 0) {
-            console.log(`Deleting all intervals on ${room} `)
-            clearInterval(playerEatCycle)
-            clearInterval(foodCycle)
-            clearInterval(gameCycle)
-            clearInterval(deleteCycles)
-            
-            console.log(`Deleting room ${room} from ${rooms}`)
-            delete rooms[room]
-            console.log(rooms)
-        }
-    }, 1000 * 60 * 5 ) //5mins 1000 * 60 * 5
 }
 io.on('connection', (socket) => {
-    let room = `room-${roomno}`
-    if (io.nsps["/"].adapter.rooms[room] &&
-        io.nsps['/'].adapter.rooms[room].length > 7) {
-        roomno += 1
-        room = `room-${roomno}`
-    }
-    if (typeof rooms[room] === "undefined") {
-        //if new room was created, new cycle will be created here
-        startCycle(room, rooms)
-    }
-    socket.join(room)
-    const gameContext = rooms[room].gameContext
-    const blocks = rooms[room].blocks
+
+    if(io.nsps["/"].adapter.rooms[`room-${roomno}`] &&
+     io.nsps['/'].adapter.rooms[`room-${roomno}`].length>1){
+         roomno+=1
+     }
+     socket.join(`room-${roomno}`)
+     console.log(socket.rooms)
+    console.log("\nA user connected")
     socket.on('message', function (message) {
         console.log(message);
     });
     socket.on('get-map', (userid) => {
         console.log("get-map ", userid)
-        console.log("rooms =>",socket.rooms)
         socket.emit('get-map', { blocks: blocks })
     })
     socket.on('user-input', (input) => {
@@ -87,22 +61,21 @@ io.on('connection', (socket) => {
 
         // console.log(input, socket.name)
         util.handleInput(input.keys, blocks, gameContext, socket.name)
-
+        
         //io.sockets.emit('position', { [socket.name]: gameContext[socket.name] })
     })
 
-    // socket.on('user-input-joystick', input => {
-    //     if (typeof socket.name === "undefined") {
-    //         // socket.emit("error", "Player is not recognized")
-    //         return
-    //     }
-    //     // console.log(input, gameContext[socket.name])
-    //     gameContext.users[socket.name] = util.handleInputJoystick(input.vector, gameContext.users[socket.name])
-    //     io.sockets.emit('position', { [socket.name]: gameContext.users[socket.name] })
-    // })
+    socket.on('user-input-joystick', input => {
+        if (typeof socket.name === "undefined") {
+            // socket.emit("error", "Player is not recognized")
+            return
+        }
+        // console.log(input, gameContext[socket.name])
+        gameContext.users[socket.name] = util.handleInputJoystick(input.vector, gameContext.users[socket.name])
+        io.sockets.emit('position', { [socket.name]: gameContext.users[socket.name] })
+    })
     socket.on('disconnect', () => {
-        console.log(`\n ${socket.name} disconnected`)
-        socket.leave(room);
+        console.log("\nA user disconnected")
         delete gameContext.users[socket.name]
     })
     socket.on('create-id', ({ name, color }) => {
@@ -131,7 +104,6 @@ io.on('connection', (socket) => {
             // if user id not present add it
             console.log("USER ID NOT PRESENT", gameContext)
             socket.name = userid
-            socket.color = color
             util.initUser(userid, color, gameContext)
             // socket.emit('game-context', gameContext)
 

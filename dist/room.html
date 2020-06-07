@@ -1,23 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZaPac</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script scr='index.js'> </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <!-- <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-    </style> -->
-    <!-- <link rel="stylesheet" type="text/css" href="/index.css"> -->
+    <link rel="stylesheet" href="room.css">
 </head>
+
 <body>
+
+    <div class="window">
+        <div class="team1-container">
+            <div class="team-title">Team 1</div>
+            <div class="team" id="team1">
+                <div class="player">sadsdas</div>
+                <div class="player">vdava</div>
+                <div class="player">Asdsd</div>
+                <div class="player">aaaa</div>
+            </div>
+        </div>
+        <div class="settings-container">
+            <div class="lobby">
+                <div class="lobby-link">ZaPac</div>
+            </div>
+            <div class="settings">
+                <div class="form-group">
+                    <label for="time">Time Limit</label>
+                    <div class="select is-rounded is-small">
+                        <select name="" id="time">
+                            <option value="3">3 mins</option>
+                            <option value="5">5 mins</option>
+                            <option value="8">8 mins</option>
+                            <option value="16">16 mins</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="team1color">Team 1 color</label>
+                    <div class="select  is-rounded is-small">
+                        <select name="" id="team1color">
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                            <option value="black">Black</option>
+                            <option value="purple">Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="team2color">Team 2 color</label>
+                    <div class="select  is-rounded is-small">
+                        <select name="" id="team2color">
+                            <option value="blue">Blue</option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="black">Black</option>
+                            <option value="purple">Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mapsize">Map Size</label>
+                    <div class="select  is-rounded is-small">
+                        <select name="" id="mapsize">
+                            <option value="mini">Mini (2 players)</option>
+                            <option selected value="small">Small (4 players)</option>
+                            <option value="medium">Medium (6 players)</option>
+                            <option value="large">Large (8 players)</option>
+                            <option value="thicc">Thicc (12 players)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="food">Total Food</label>
+                    <div class="select  is-rounded is-small">
+                        <select name="" id="food">
+                            <option value="20">20 Purples</option>
+                            <option selected value="30">30 Purples</option>
+                            <option value="50">50 Purples</option>
+                            <option value="80">80 Purples</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="play-btn button is-rounded is-small">PLAY</button>
+            </div>
+
+            <div class="invitation">Want to invite friends? Give them
+                <span id="copy-link" onclick="copyRoomCodeToClipboard(); showTips('Copied!','copy-link');" value="1212"><a>this link</a></span></div>
+        </div>
+        <div class="team2-container">
+            <div class="team-title">Team 2</div>
+            <div class="team" id="team2">
+                <div class="player">sdsdasdasdasasd asdas</div>
+                <div class="player">asdas</div>
+                <div class="player">gdfgethrtjh</div>
+                <div class="player">gwrg wfwe w</div>
+
+            </div>
+        </div>
+    </div>
     <script>
-        alert("Comming soon")
-        window.history.back()
+        const showTips = (tip, whereId) => {
+            const tipsElem = document.getElementById('tips')
+            tipsElem.innerHTML = `<span class="tip">${tip}</span>
+            <span id="close-button" class="close-button">&times;</span>`
+            tipsElem.style.display = "inline-flex"
+            document.getElementById(whereId).after(tipsElem)
+            setTimeout(() => {
+                tipsElem.style.display = "none"
+            }, 2000)
+            document.getElementById("close-button").addEventListener("click", (ev) => { tipsElem.style.display = "none" })
+        }
+
+        function changeTeam() {
+            console.log("asdas")
+        }
+        const players = document.getElementsByClassName("player")
+        const team1 = document.getElementById("team1")
+        const team2 = document.getElementById("team2")
+        for (let i = 0; i < players.length; i++) {
+            players.item(i).onclick = (e) => {
+                const player = e.target
+                console.log(player.innerHTML)
+                const currentTeam = player.parentElement.id
+                console.log(currentTeam)
+                if (currentTeam === "team1") {
+
+                    team2.append(player)
+                    // team1.removeChild(player)
+                } else {
+                    team1.append(player)
+                    // team2.removeChild(player)
+                }
+            }
+        }
+        const selectColorTeam1 = document.getElementById("team1color")
+        const selectColorTeam2 = document.getElementById("team2color")
+
+        selectColorTeam1.onchange = (e) => {
+            team1.style.backgroundColor = selectColorTeam1.value
+            if (selectColorTeam1.value === "black") {
+                team1.style.border = "4px solid purple"
+            } else {
+                team1.style.border = ""
+            }
+        }
+        selectColorTeam2.onchange = (e) => {
+            team2.style.backgroundColor = selectColorTeam2.value
+            if (selectColorTeam2.value === "black") {
+                team1.style.border = "4px solid purple"
+            } else {
+                team1.style.border = ""
+            }
+        }
+        team1.style.backgroundColor = selectColorTeam1.value
+        team2.style.backgroundColor = selectColorTeam2.value
+
+        function copyRoomCodeToClipboard() {
+            /* Get the text field */
+            var copyText = document.getElementById("myInput");
+            var textArea = document.createElement("textarea")
+            document.body.appendChild(textArea)
+            textArea.value = "room code"
+            
+            /* Select the text field */
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            /* Copy the text inside the text field */
+            document.execCommand("copy");
+
+            textArea.remove()
+        }
     </script>
+    <div class="tips" id="tips">
+
+    </div>
 </body>
+
 </html>

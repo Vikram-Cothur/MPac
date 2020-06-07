@@ -7,11 +7,13 @@ const consts = {
 
 const initRoom = () => {
     return {
-        mapSize: { height: consts.blockSize * (40 + consts.outterBlocks), width: consts.blockSize * (70 + consts.outterBlocks) },
-        blockSize: consts.blockSize,
-        foodSize: consts.foodSize,
-        users: {},
-        userBlocks: []
+        gameContext: {
+            mapSize: { height: consts.blockSize * (40 + consts.outterBlocks), width: consts.blockSize * (70 + consts.outterBlocks) },
+            blockSize: consts.blockSize,
+            foodSize: consts.foodSize,
+            users: {},
+            userBlocks: []
+        }
     }
 }
 const initUser = (userid, color, gameContext) => {
@@ -19,7 +21,7 @@ const initUser = (userid, color, gameContext) => {
         posx: randomX(gameContext),
         posy: randomY(gameContext),
         color: color.toLowerCase(),
-        score: 1,
+        score: 0,
         justEaten: 0,
         justEatenSpecial: 0,
         justEatenPlayer: { num: 0, color: 'black' },
@@ -47,7 +49,7 @@ const checkForCollision = (userObj, blocks, blockSize) => {
         ) {
             // userObj.posx -= (x-userObj.posx)
             // userObj.posy -= (y-userObj.posy)
-            // console.log("HIT")
+            console.log("HIT")
             collided = true
         }
     })
@@ -130,7 +132,7 @@ const handlePlayerEatPlayer = (gameObj) => {
                     gameObj.users[players[i]].posx = randomX(gameObj)
                     gameObj.users[players[i]].posy = randomY(gameObj)
                     gameObj.users[players[j]].special = false //reset after eating
-                    gameObj.users[players[j]].justEatenPlayer.color = gameObj.users[players[i]].color
+                    gameObj.users[players[J]].justEatenPlayer.color = gameObj.users[players[i]].color
                 }
                 else if (curPlayer.score == otherPlayer.score) {
                     continue
@@ -140,9 +142,6 @@ const handlePlayerEatPlayer = (gameObj) => {
                     gameObj.users[players[j]].score = Math.floor(gameObj.users[players[j]].score / 2)
                     gameObj.users[players[j]].posx = randomX(gameObj)
                     gameObj.users[players[j]].posy = randomY(gameObj)
-
-                    //player who has eaten the above one
-                    gameObj.users[players[i]].score += gameObj.users[players[j]].score
                     gameObj.users[players[i]].justEatenPlayer.num = 10 // not a typo
                     gameObj.users[players[i]].justEatenPlayer.color = gameObj.users[players[j]].color // not a typo
                 } else {
@@ -150,9 +149,6 @@ const handlePlayerEatPlayer = (gameObj) => {
                     gameObj.users[players[i]].score = Math.floor(gameObj.users[players[i]].score / 2)
                     gameObj.users[players[i]].posx = randomX(gameObj)
                     gameObj.users[players[i]].posy = randomY(gameObj)
-
-                    //player who has eaten the above one
-                    gameObj.users[players[j]].score += gameObj.users[players[i]].score
                     gameObj.users[players[j]].justEatenPlayer.num = 10 // not a typo
                     gameObj.users[players[j]].justEatenPlayer.color = gameObj.users[players[i]].color // not a typo
                 }
@@ -166,7 +162,6 @@ const random = (floor, ceiling) => {
     return _.random(floor, ceiling - (2 * floor))
 }
 const handlePlayerEatFood = (userObj, food, foodSize) => {
-    if(typeof food === "undefined") return userObj;
 
     let x = 0
     let y = 0
@@ -187,19 +182,19 @@ const handlePlayerEatFood = (userObj, food, foodSize) => {
         ) {
             if (v.length > 2 && v[2] == 1) { //special food is consumed
                 userObj.special = true
-                // console.log("ATE SPECIAL FOOD")
+                console.log("ATE SPECIAL FOOD")
                 collided = true
                 food.splice(i, 1)
                 userObj.score += 1
                 userObj.justEatenSpecial += 100
             } else if (v.length > 2 && v[2] == 2) {
                 userObj.blocks += 1
-                // console.log("ATE BLOCK FOOD")
+                console.log("ATE BLOCK FOOD")
                 collided = true
                 food.splice(i, 1)
             } else {
 
-                // console.log("ATE FOOD")
+                console.log("ATE FOOD")
                 collided = true
                 food.splice(i, 1)
                 userObj.score += 1
