@@ -9,6 +9,16 @@
     color: white;
     font-weight: 700;
 }
+.modal-window{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 10px;
+    height: 80vh;
+    max-height: 100vh;
+    color: white;
+    font-weight: 700;
+}
 .settings-container {
     display: flex;
     flex-direction: column;
@@ -137,6 +147,19 @@
     height: 24px;
     width: 24px;
     background-image: url("images/sync.svg");
+}
+
+.leaderboard{
+    display: flex;
+    position: fixed;
+    top:10px;
+    right: 10px;
+    height: auto;
+    width: 100px;
+    color: black;
+    background-color: rgba(255,255,255,0.5);
+    justify-content: center;
+    align-items: center;
 }
 *{
     box-sizing: border-box;

@@ -2,12 +2,18 @@ const _ = require('lodash')
 const consts = {
     outterBlocks: 12,
     blockSize: 32,
-    foodSize: 24
+    foodSize: 24,
+    mapHeight: 40,
+    mapWidth: 70,
+
 }
 
 const initRoom = () => {
     return {
-        mapSize: { height: consts.blockSize * (40 + consts.outterBlocks), width: consts.blockSize * (70 + consts.outterBlocks) },
+        mapSize: {
+            height: consts.blockSize * (consts.mapHeight + consts.outterBlocks),
+            width: consts.blockSize * (consts.mapWidth + consts.outterBlocks)
+        },
         blockSize: consts.blockSize,
         foodSize: consts.foodSize,
         users: {},
@@ -25,6 +31,20 @@ const initUser = (userid, color, gameContext) => {
         justEatenPlayer: { num: 0, color: 'black' },
         special: false,
         blocks: 0
+    }
+}
+const initUserCustomRoom = (userid, color, team, gameContext) => {
+    return gameContext.users[userid] = {
+        posx: randomX(gameContext),
+        posy: randomY(gameContext),
+        color: color.toLowerCase(),
+        score: 1,
+        justEaten: 0,
+        justEatenSpecial: 0,
+        justEatenPlayer: { num: 0, color: 'black' },
+        special: false,
+        blocks: 0,
+        team: team
     }
 }
 const checkForCollision = (userObj, blocks, blockSize) => {
@@ -166,7 +186,7 @@ const random = (floor, ceiling) => {
     return _.random(floor, ceiling - (2 * floor))
 }
 const handlePlayerEatFood = (userObj, food, foodSize) => {
-    if(typeof food === "undefined") return userObj;
+    if (typeof food === "undefined") return userObj;
 
     let x = 0
     let y = 0
@@ -234,13 +254,13 @@ const generateMap = ({ height, width }, blockSize) => {
     }
     return blocks
 }
-const generateFood = (currentFood, { height, width }, blocks, blockSize) => {
+const generateFood = (currentFood, { height, width }, blocks, blockSize, totalFood) => {
     if (currentFood === null) {
         var food = []
     } else {
         var food = currentFood
     }
-    const numOfFood = 30 - food.length
+    const numOfFood = totalFood - food.length
     for (var i = 0; i < numOfFood; i++) {
         const x = Math.floor(Math.random() * width)
         const y = Math.floor(Math.random() * height)
@@ -291,5 +311,6 @@ module.exports = {
     randomY,
     initUser,
     vanishAfter,
-    initRoom
+    initRoom,
+    initUserCustomRoom
 }

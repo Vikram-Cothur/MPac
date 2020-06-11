@@ -36,6 +36,7 @@ export default class Player {
         } else {
             ctx.fillStyle = v.color;
         }
+       
         ctx.fillText(this.name, posx + (this.blockSize / 2), posy - 5)
         ctx.fillRect(posx, posy, this.blockSize, this.blockSize);
         ctx.fillStyle = "white";
