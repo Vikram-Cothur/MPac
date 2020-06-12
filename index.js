@@ -35,16 +35,9 @@ const cleanUp = (rooms, room) => {
     console.log(rooms)
 }
 const startCycle = (roomNameSpace, room, rooms, numOfFood, time) => {
-    const runTill = typeof time === "undefined" ? null : time
-    let t = 0
-    if (runTill) {
-        setTimeout(() => {
-            cleanUp(rooms, room)
-        }, 1000 * 60 * runTill)
-    }
     const totalFood = typeof numOfFood === "undefined" ? 50 : numOfFood
     let gameContext;
-    if(roomNameSpace === "/"){
+    if (roomNameSpace === "/") {
         gameContext = util.initRoom()
         rooms[room] = {}
         rooms[room]["gameContext"] = gameContext
@@ -52,15 +45,25 @@ const startCycle = (roomNameSpace, room, rooms, numOfFood, time) => {
         gameContext = rooms[room]["gameContext"]
     }
 
+    const runTill = typeof time === "undefined" ? null : time
+    if (runTill) {
+        const startTime = Date.now()
+        gameContext.startTime = startTime
+        gameContext.endTime = startTime + (time*1000*60)
+        setInterval(()=>{
+            gameContext.now = Date.now() - gameContext.startTime 
+        },1000)
+        setTimeout(() => {
+            cleanUp(rooms, room)
+        }, 1000 * 60 * runTill)
+    }
     const blocks = util.generateMap(gameContext.mapSize, gameContext.blockSize)
     rooms[room]["blocks"] = blocks
-    
+
     const food = util.generateFood(null, gameContext.mapSize, blocks, gameContext.blockSize, totalFood)
 
     gameCycle = setInterval(() => {
         // console.log("running "+room)
-        t+=20
-        gameContext.time = t
         io.of(roomNameSpace).in(room).emit('game-context', gameContext);
     }, 20);
     foodCycle = setInterval(() => {
@@ -75,7 +78,7 @@ const startCycle = (roomNameSpace, room, rooms, numOfFood, time) => {
 
         }
     }, 1000 * 60 * 5) //5mins 1000 * 60 * 5
-    
+
 }
 io.on('connection', (socket) => {
     let room = `room-${roomno}`
@@ -276,6 +279,8 @@ customRoom.on('connection', function (socket) {
             height: util.consts.blockSize * ((util.consts.mapHeight * ratio) + util.consts.outterBlocks),
             width: util.consts.blockSize * ((util.consts.mapWidth * ratio) + util.consts.outterBlocks)
         }
+        //since mapSize was just calculated we need to randomize player positions again
+        util.randomizePosOfUsers(gameContext)
         startCycle("/room", socket.roomCode, customRooms, totalFood, timeLimit)
     })
     socket.on("request-for-players", () => {
@@ -293,7 +298,7 @@ customRoom.on('connection', function (socket) {
     socket.on('get-map', (userid) => {
         console.log("get-map ", userid)
         console.log("rooms =>", socket.rooms)
-        
+
         socket.emit('get-map', { blocks: customRooms[socket.roomCode].blocks })
     })
     socket.on('user-input', (input) => {

@@ -238,7 +238,7 @@ window.onload = () => {
 
         if (mother === null) {
             // console.log("GAME IS UNDEFINED:", gameContext)
-            
+
             //remove all children of body
             var child = document.body.lastElementChild;
             while (child) {
@@ -249,20 +249,54 @@ window.onload = () => {
             const theMotherCanvas = document.createElement("canvas")
             theMotherCanvas.id = "the-mother"
             document.body.append(theMotherCanvas)
-            
+
             //create leaderboard and append to body
             const leaderboard = document.createElement("div")
             leaderboard.id = "leaderboard"
             leaderboard.className = "leaderboard"
+            leaderboard.innerHTML =
+                `<div id="seconds"> </div>
+                
+                <div id="players"> <div>`
             document.body.append(leaderboard)
-
-
+            const seconds = document.getElementById("seconds")
+            seconds.style = 
+                `border-bottom: 2px solid;
+                width: 100%;
+                text-align: center;`
+            const players = document.getElementById("players")
+            Object.keys(gameContext.users).forEach((v, i) => {
+                const player = document.createElement("div")
+                player.style = 
+                    `display: flex;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    width: 100%;
+                    height: auto;`
+                player.id = v
+                player.innerHTML = `${v} ${gameContext.users[v].score}`
+                players.append(player)
+            })
             mother = new Mother(socket, username, gameContext, nipple)
             window.scrollTo(500, 350)
             console.log(mother)
+
+            //gameover  timeout
+            setTimeout(()=>{
+                leaderboard.classList.add("leaderboard-gameover")
+                theMotherCanvas.style = `filter: blur(1px);`
+            },gameContext.endTime-gameContext.startTime) 
+
+
+            setInterval(() => {
+                Object.keys(gameContext.users).forEach((v, i) => {
+                    document.getElementById(v).innerHTML = `${v} ${mother.get().users[v].score}`
+                })
+
+                seconds.innerHTML = `<div>${Math.floor(mother.get().now / 1000)} seconds</div>`
+            }, 1000)
         } else {
             //console.log("GAME IS DEFINED:", gameContext)
-            document.getElementById("leaderboard").innerHTML = `<div>${Math.floor(gameContext.time/1000)} seconds</div>`
             mother.update(gameContext)
         }
 

@@ -288,6 +288,11 @@ const randomY = (gameObj) => {
     return _.random(consts.outterBlocks * gameObj.blockSize, gameObj.mapSize.height - (consts.outterBlocks * gameObj.blockSize))
 
 }
+const randomizePosOfUsers = (gameObj) => {
+    Object.keys(gameObj.users).forEach((v,i)=>{
+        gameObj.users[v] = {...gameObj.users[v], posx: randomX(gameObj), posy: randomY(gameObj)}
+    })
+}
 const vanishAfter = (secs, gameContext, pos) => {
     var vanish = setTimeout(() => {
         gameContext.userBlocks.map((v, i) => {
@@ -312,5 +317,6 @@ module.exports = {
     initUser,
     vanishAfter,
     initRoom,
-    initUserCustomRoom
+    initUserCustomRoom,
+    randomizePosOfUsers
 }
