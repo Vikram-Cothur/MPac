@@ -220,6 +220,7 @@ window.onload = () => {
 
     socket.on("refresh", ()=>{
         window.location.href = window.location.href.split("?")[0]
+        window.location.reload()
         // alert(window.location.href.split("?")[0])
         // window.location.
     })
@@ -325,7 +326,8 @@ window.onload = () => {
                     players.append(document.getElementById("team2"))
                     players.append(document.getElementById("team1"))
                 }
-                seconds.innerHTML = `<div>${Math.floor(mother.get().now / 1000)} seconds</div>`
+                // console.log(mother.get())
+                seconds.innerHTML = `<div>${Math.floor(((mother.get().endTime -mother.get().startTime) - mother.get().now)/1000)} seconds</div>`
             }, 1000)
         } else {
             //console.log("GAME IS DEFINED:", gameContext)

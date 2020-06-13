@@ -43,7 +43,7 @@ export default class Player {
         ctx.fillText(v.score, posx + (this.blockSize / 2), posy + 20)
         //just Eaten animation
         if (justEaten > 0) {
-            console.log(justEaten)
+            // console.log(justEaten)
             ctx.lineWidth = 5
             for (var i = 0; i < justEaten; i++) {
                 const color = 800080
@@ -54,7 +54,7 @@ export default class Player {
         }
         if (v.justEatenPlayer.num > 0) {
             const eaten = v.justEatenPlayer.num
-            console.log(v.justEatenPlayer)
+            //console.log(v.justEatenPlayer)
             ctx.lineWidth = 5
             for (var i = 0; i < eaten; i++) {
                 const color = v.justEatenPlayer.color
