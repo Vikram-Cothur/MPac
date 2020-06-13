@@ -257,7 +257,7 @@ customRoom.on('connection', function (socket) {
         socket.color = color
         socket.team = team
         util.initUserCustomRoom(name, color, team, gameContext)
-        socket.broadcast.emit("players", gameContext.users)
+        socket.broadcast.to(socket.roomCode).emit("players", gameContext.users)
         // socket.emit("players", gameContext.users)
     })
 
@@ -268,7 +268,7 @@ customRoom.on('connection', function (socket) {
             return
         }
         util.initUserCustomRoom(name, color, team, gameContext)
-        socket.broadcast.emit("players", gameContext.users)
+        socket.broadcast.to(socket.roomCode).emit("players", gameContext.users)
         // socket.emit("players", gameContext.users)
     })
     socket.on("play", ({ mapSize, totalFood, timeLimit }) => {
