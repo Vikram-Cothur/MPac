@@ -25,10 +25,10 @@ rooms = {
 
 const cleanUp = (rooms, room) => {
     console.log(`Deleting all intervals on ${room} `)
-    clearInterval(playerEatCycle)
-    clearInterval(foodCycle)
-    clearInterval(gameCycle)
-    clearInterval(deleteCycles)
+    clearInterval(rooms[room].playerEatCycle)
+    clearInterval(rooms[room].foodCycle)
+    clearInterval(rooms[room].gameCycle)
+    clearInterval(rooms[room].deleteCycles)
 
     console.log(`Deleting room ${room} from ${rooms}`)
     delete rooms[room]
@@ -78,7 +78,10 @@ const startCycle = (roomNameSpace, room, rooms, numOfFood, time) => {
 
         }
     }, 1000 * 60 * 5) //5mins 1000 * 60 * 5
-
+    rooms[room].gameCycle = gameCycle
+    rooms[room].foodCycle = foodCycle
+    rooms[room].playerEatCycle = playerEatCycle
+    rooms[room].deleteCycles = deleteCycles
 }
 io.on('connection', (socket) => {
     let room = `room-${roomno}`
@@ -246,9 +249,24 @@ customRoom.on('connection', function (socket) {
     })
 
     socket.on("set-player", (name, color, team) => {
+        if(gameContext === null){
+            socket.emit("refresh")
+            return
+        }
         socket.name = name
         socket.color = color
         socket.team = team
+        util.initUserCustomRoom(name, color, team, gameContext)
+        socket.broadcast.emit("players", gameContext.users)
+        // socket.emit("players", gameContext.users)
+    })
+
+    //only admin is allowed to change team of player
+    socket.on("change-player", (name, color, team) => {
+        if(gameContext === null){
+            socket.emit("refresh")
+            return
+        }
         util.initUserCustomRoom(name, color, team, gameContext)
         socket.broadcast.emit("players", gameContext.users)
         // socket.emit("players", gameContext.users)

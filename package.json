@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "webpack": "webpack --mode=development --watch --config webpack.config.js",
-    "build": "webpack",
+    "build": "webpack --config webpack.config.js",
     "prod": "NODE_ENV=production forever start index.js"
   },
   "author": "Vikram Cothur",

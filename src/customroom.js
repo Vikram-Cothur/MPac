@@ -151,14 +151,14 @@ window.onload = () => {
             const name = player.innerText
             const color = team2.style.backgroundColor
             const team = "team2"
-            socket.emit("set-player", name, color, team)
+            socket.emit("change-player", name, color, team)
             team2.append(player)
             // team1.removeChild(player)
         } else {
             const color = team1.style.backgroundColor
             const name = player.innerText
             const team = "team1"
-            socket.emit("set-player", name, color, team)
+            socket.emit("change-player", name, color, team)
             team1.append(player)
             // team2.removeChild(player)
         }
@@ -218,7 +218,11 @@ window.onload = () => {
 
     })
 
-
+    socket.on("refresh", ()=>{
+        window.location.href = window.location.href.split("?")[0]
+        // alert(window.location.href.split("?")[0])
+        // window.location.
+    })
 
     socket.on('game-context', gameContext => {
         // console.log("gameContext ", gameContext)
@@ -265,6 +269,18 @@ window.onload = () => {
                 width: 100%;
                 text-align: center;`
             const players = document.getElementById("players")
+
+            const leaderboardTeam1 = document.createElement("div")
+            leaderboardTeam1.id = "team1"
+            leaderboardTeam1.className = "leaderboard-team"
+            leaderboardTeam1.append("Team1")
+            players.append(leaderboardTeam1)
+            const leaderboardTeam2 = document.createElement("div")
+            leaderboardTeam2.id = "team2"
+            leaderboardTeam2.className = "leaderboard-team"
+            leaderboardTeam2.append("Team2")
+            players.append(leaderboardTeam2)
+
             Object.keys(gameContext.users).forEach((v, i) => {
                 const player = document.createElement("div")
                 player.style = 
@@ -272,10 +288,13 @@ window.onload = () => {
                     justify-content: space-evenly;
                     align-items: center;
                     width: 100%;
-                    height: auto;`
+                    height: auto;
+                    color: ${gameContext.users[v].color}`
+
                 player.id = v
                 player.innerHTML = `${v} ${gameContext.users[v].score}`
-                players.append(player)
+                document.getElementById(gameContext.users[v].team).append(player)
+                player.parentElement.style = `color: ${gameContext.users[v].color}`
             })
             mother = new Mother(socket, username, gameContext, nipple)
             window.scrollTo(500, 350)
@@ -284,15 +303,28 @@ window.onload = () => {
             //gameover  timeout
             setTimeout(()=>{
                 leaderboard.classList.add("leaderboard-gameover")
-                theMotherCanvas.style = `filter: blur(1px);`
+                theMotherCanvas.style = `filter: blur(2px);`
             },gameContext.endTime-gameContext.startTime) 
 
 
             setInterval(() => {
+                let team1Score = 0
+                let team2Score = 0
                 Object.keys(gameContext.users).forEach((v, i) => {
+                    if(mother.get().users[v].team === "team1"){
+                        team1Score += mother.get().users[v].score
+                    } else {
+                        team2Score += mother.get().users[v].score
+                    }
                     document.getElementById(v).innerHTML = `${v} ${mother.get().users[v].score}`
                 })
-
+                if(team1Score >= team2Score){
+                    players.append(document.getElementById("team1"))
+                    players.append(document.getElementById("team2"))
+                } else {
+                    players.append(document.getElementById("team2"))
+                    players.append(document.getElementById("team1"))
+                }
                 seconds.innerHTML = `<div>${Math.floor(mother.get().now / 1000)} seconds</div>`
             }, 1000)
         } else {

@@ -166,11 +166,17 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background-color: rgba(200, 255, 200, 1)
 }
 .leaderboard-gameover::before {
     content: "Game Over";
-    background-color: purple;
-    color: white;
+    color: purple;
+}
+.leaderboard-team {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .blur {
     filter: blur(1px);
